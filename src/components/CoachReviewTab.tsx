@@ -4,12 +4,8 @@ import {
   AlertTriangle, 
   RotateCcw, 
   Play, 
-  MessageSquare, 
-  Star, 
-  Sparkles,
-  Filter,
-  Check,
-  Send
+  MessageSquare,
+  Check
 } from 'lucide-react';
 import { Clip, ReviewStatus } from '../types/cheer';
 
@@ -25,18 +21,18 @@ export const CoachReviewTab: React.FC<CoachReviewTabProps> = ({
   onUpdateClip,
 }) => {
   const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [coachNotesInput, setCoachNotesInput] = useState<{ [id: string]: string }>({});
+  const [notesState, setNotesState] = useState<{ [id: string]: string }>({});
 
   const filteredClips = clips.filter(c => {
     if (filterStatus === 'all') return true;
     return c.status === filterStatus;
   });
 
-  const handleQuickStatusChange = (clip: Clip, newStatus: ReviewStatus) => {
+  const handleStatusChange = (clip: Clip, newStatus: ReviewStatus) => {
     const updated: Clip = {
       ...clip,
       status: newStatus,
-      coachFeedback: coachNotesInput[clip.id] || clip.coachFeedback,
+      coachFeedback: notesState[clip.id] !== undefined ? notesState[clip.id] : clip.coachFeedback,
     };
     onUpdateClip(updated);
   };
@@ -44,225 +40,198 @@ export const CoachReviewTab: React.FC<CoachReviewTabProps> = ({
   const handleSaveNotes = (clip: Clip) => {
     const updated: Clip = {
       ...clip,
-      coachFeedback: coachNotesInput[clip.id] || clip.coachFeedback,
+      coachFeedback: notesState[clip.id] !== undefined ? notesState[clip.id] : clip.coachFeedback,
     };
     onUpdateClip(updated);
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
+    <div className="space-y-5">
       
-      {/* Banner / Instructions */}
-      <div className="bg-gradient-to-r from-blue-950/70 via-slate-900 to-slate-900 border border-blue-900/50 rounded-2xl p-5 shadow-lg">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Header Banner */}
+      <div className="bg-white border-l-4 border-[#002D62] p-4 rounded-md shadow-sm border border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse" />
-              <h2 className="text-lg font-bold text-white">Head Coach Review Queue</h2>
-            </div>
-            <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-              Collaborative portal for coach evaluations. Review technique on tumbling passes, stunt stability, and pyramid transitions before clips are released to team social media.
+            <h2 className="text-base font-bold text-[#002D62] uppercase tracking-wide">
+              Head Coach Review Portal
+            </h2>
+            <p className="text-xs text-slate-600">
+              Collaboration queue with Coach Alexis Vano. Review technique, tumbling execution, and approve clips before they go live on social.
             </p>
           </div>
 
-          {/* Quick status filters */}
-          <div className="flex items-center gap-2 flex-wrap">
+          {/* Simple Tab Filters - No Pills */}
+          <div className="flex items-center gap-1.5 flex-wrap">
             <button
               onClick={() => setFilterStatus('all')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-sm transition-colors ${
                 filterStatus === 'all'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  ? 'bg-[#002D62] text-white'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
               All ({clips.length})
             </button>
             <button
               onClick={() => setFilterStatus('needs_review')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+              className={`px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-sm transition-colors ${
                 filterStatus === 'needs_review'
-                  ? 'bg-amber-500 text-slate-950 font-bold'
-                  : 'bg-slate-800 text-amber-300 hover:bg-slate-700'
+                  ? 'bg-amber-600 text-white'
+                  : 'bg-slate-100 text-amber-700 hover:bg-slate-200'
               }`}
             >
-              <AlertTriangle className="w-3.5 h-3.5" />
               Pending ({clips.filter(c => c.status === 'needs_review').length})
             </button>
             <button
               onClick={() => setFilterStatus('coach_approved')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+              className={`px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-sm transition-colors ${
                 filterStatus === 'coach_approved'
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-slate-800 text-emerald-300 hover:bg-slate-700'
+                  ? 'bg-emerald-700 text-white'
+                  : 'bg-slate-100 text-emerald-800 hover:bg-slate-200'
               }`}
             >
-              <CheckCircle2 className="w-3.5 h-3.5" />
               Approved ({clips.filter(c => c.status === 'coach_approved').length})
             </button>
             <button
               onClick={() => setFilterStatus('revision_requested')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+              className={`px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-sm transition-colors ${
                 filterStatus === 'revision_requested'
-                  ? 'bg-rose-600 text-white'
-                  : 'bg-slate-800 text-rose-300 hover:bg-slate-700'
+                  ? 'bg-rose-700 text-white'
+                  : 'bg-slate-100 text-rose-800 hover:bg-slate-200'
               }`}
             >
-              <RotateCcw className="w-3.5 h-3.5" />
               Retakes ({clips.filter(c => c.status === 'revision_requested').length})
             </button>
           </div>
         </div>
       </div>
 
-      {/* List of Clips for Review */}
-      {filteredClips.length === 0 ? (
-        <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-12 text-center">
-          <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto mb-3 opacity-60" />
-          <h3 className="text-base font-bold text-white mb-1">Queue Clear</h3>
-          <p className="text-xs text-slate-400">No clips match the selected review filter.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {filteredClips.map((clip) => {
-            const currentNote = coachNotesInput[clip.id] !== undefined ? coachNotesInput[clip.id] : (clip.coachFeedback || '');
-            
+      {/* Clips Review List */}
+      <div className="space-y-3">
+        {filteredClips.length === 0 ? (
+          <div className="bg-white border border-slate-200 rounded-md p-8 text-center text-xs text-slate-500">
+            No clips match the selected filter.
+          </div>
+        ) : (
+          filteredClips.map((clip) => {
+            const currentNote = notesState[clip.id] !== undefined ? notesState[clip.id] : (clip.coachFeedback || '');
+
             return (
               <div 
                 key={clip.id}
-                className="bg-slate-900/80 border border-slate-800 hover:border-slate-700 rounded-xl p-4 sm:p-5 transition-all flex flex-col md:flex-row gap-5"
+                className="bg-white border border-slate-200/90 rounded-md p-4 shadow-sm flex flex-col md:flex-row gap-4 items-start"
               >
-                {/* Left Thumbnail & Quick Play */}
+                {/* Thumbnail */}
                 <div 
                   onClick={() => onSelectClip(clip)}
-                  className="relative w-full md:w-56 aspect-video bg-black rounded-lg overflow-hidden shrink-0 cursor-pointer group"
+                  className="relative w-full md:w-48 aspect-video bg-slate-900 rounded-sm overflow-hidden shrink-0 cursor-pointer group"
                 >
                   <img 
-                    src={clip.thumbnailUrl || 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80'} 
+                    src={clip.thumbnailUrl} 
                     alt={clip.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform"
                   />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-colors">
-                    <div className="w-10 h-10 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                      <Play className="w-4 h-4 fill-slate-950 ml-0.5" />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-sm bg-[#002D62] text-white flex items-center justify-center shadow-md">
+                      <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
                     </div>
                   </div>
-                  <span className="absolute bottom-2 left-2 text-[10px] font-mono bg-black/70 px-1.5 py-0.5 rounded text-white">
-                    {clip.duration || '0:15'} • {clip.aspectRatio}
+                  <span className="absolute bottom-1 right-1 text-[10px] font-mono bg-black/70 px-1 py-0.2 rounded-sm text-white">
+                    {clip.duration || '0:15'}
                   </span>
                 </div>
 
-                {/* Center Content */}
-                <div className="flex-1 space-y-2">
+                {/* Content */}
+                <div className="flex-1 space-y-2 w-full">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm bg-[#002D62] text-white">
                         {clip.skillCategory}
                       </span>
                       <h3 
                         onClick={() => onSelectClip(clip)}
-                        className="text-base font-bold text-white hover:text-amber-400 cursor-pointer transition-colors"
+                        className="text-sm font-bold text-slate-900 hover:text-[#002D62] cursor-pointer transition-colors"
                       >
                         {clip.title}
                       </h3>
                     </div>
                     <span className="text-xs text-slate-400 font-mono">
-                      Recorded: {clip.dateRecorded}
+                      {clip.dateRecorded}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-300">
-                    <span className="font-semibold text-slate-400">Athletes:</span> {clip.athletes?.join(', ') || 'Team'}
+                  <p className="text-xs text-slate-600">
+                    <span className="font-semibold text-slate-700">Athletes:</span> {clip.athletes.join(', ')}
                   </p>
 
-                  {/* Coach Notes Input */}
-                  <div className="pt-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                        <MessageSquare className="w-3.5 h-3.5 text-blue-400" />
-                        Coach Coaching Notes & Corrections:
-                      </label>
-                      {clip.coachRating && (
-                        <div className="flex items-center gap-1 text-amber-400 text-xs">
-                          <Star className="w-3 h-3 fill-amber-400" />
-                          <span>Rating: {clip.coachRating}/5</span>
-                        </div>
-                      )}
-                    </div>
+                  {/* Coach Notes Row */}
+                  <div className="pt-1">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+                      Coach Alexis Vano Feedback:
+                    </label>
                     <div className="flex gap-2">
                       <input 
                         type="text"
                         value={currentNote}
-                        onChange={(e) => setCoachNotesInput({ ...coachNotesInput, [clip.id]: e.target.value })}
-                        placeholder="Add coaching feedback (e.g. 'Keep chest up on the landing', 'Great power')..."
-                        className="flex-1 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-400"
+                        onChange={(e) => setNotesState({ ...notesState, [clip.id]: e.target.value })}
+                        placeholder="Add coaching comment on form or landing..."
+                        className="flex-1 px-2.5 py-1 bg-slate-50 border border-slate-300 rounded-sm text-xs text-slate-900 focus:outline-none focus:border-[#002D62]"
                       />
                       <button
                         onClick={() => handleSaveNotes(clip)}
-                        className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium transition-colors"
+                        className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-sm text-xs font-semibold"
                       >
-                        Save Note
+                        Save
                       </button>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Action Buttons */}
-                <div className="md:w-48 flex flex-col justify-between pt-3 md:pt-0 md:border-l md:border-slate-800 md:pl-5 space-y-2 shrink-0">
-                  <div className="space-y-1.5">
-                    <span className="text-[11px] font-semibold text-slate-400 block mb-1">
-                      Coach Decision:
-                    </span>
-                    
-                    <button
-                      onClick={() => handleQuickStatusChange(clip, 'coach_approved')}
-                      className={`w-full py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
-                        clip.status === 'coach_approved'
-                          ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30 ring-1 ring-emerald-400'
-                          : 'bg-slate-800/80 hover:bg-emerald-950/60 text-emerald-400 border border-emerald-500/20'
-                      }`}
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      Approve Clip
-                    </button>
-
-                    <button
-                      onClick={() => handleQuickStatusChange(clip, 'ready_to_post')}
-                      className={`w-full py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
-                        clip.status === 'ready_to_post'
-                          ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30 ring-1 ring-purple-400'
-                          : 'bg-slate-800/80 hover:bg-purple-950/60 text-purple-300 border border-purple-500/20'
-                      }`}
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      Ready for Social
-                    </button>
-
-                    <button
-                      onClick={() => handleQuickStatusChange(clip, 'revision_requested')}
-                      className={`w-full py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
-                        clip.status === 'revision_requested'
-                          ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
-                          : 'bg-slate-800/80 hover:bg-rose-950/60 text-rose-300 border border-rose-500/20'
-                      }`}
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      Request Retake
-                    </button>
-                  </div>
+                {/* Status Decision Buttons */}
+                <div className="w-full md:w-40 flex flex-col gap-1.5 shrink-0 pt-2 md:pt-0 md:border-l md:border-slate-100 md:pl-4">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Decision:
+                  </span>
 
                   <button
-                    onClick={() => onSelectClip(clip)}
-                    className="text-xs text-center text-slate-400 hover:text-white py-1 transition-colors"
+                    onClick={() => handleStatusChange(clip, 'coach_approved')}
+                    className={`w-full py-1 px-2.5 rounded-sm text-xs font-bold transition-colors ${
+                      clip.status === 'coach_approved'
+                        ? 'bg-emerald-700 text-white shadow-xs'
+                        : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200'
+                    }`}
                   >
-                    Open Slow-Mo Analyzer →
+                    ✓ Approve Clip
+                  </button>
+
+                  <button
+                    onClick={() => handleStatusChange(clip, 'ready_to_post')}
+                    className={`w-full py-1 px-2.5 rounded-sm text-xs font-bold transition-colors ${
+                      clip.status === 'ready_to_post'
+                        ? 'bg-[#002D62] text-white shadow-xs'
+                        : 'bg-blue-50 text-[#002D62] hover:bg-blue-100 border border-blue-200'
+                    }`}
+                  >
+                    🚀 Ready to Post
+                  </button>
+
+                  <button
+                    onClick={() => handleStatusChange(clip, 'revision_requested')}
+                    className={`w-full py-1 px-2.5 rounded-sm text-xs font-bold transition-colors ${
+                      clip.status === 'revision_requested'
+                        ? 'bg-rose-700 text-white shadow-xs'
+                        : 'bg-rose-50 text-rose-800 hover:bg-rose-100 border border-rose-200'
+                    }`}
+                  >
+                    ↺ Request Retake
                   </button>
                 </div>
 
               </div>
             );
-          })}
-        </div>
-      )}
+          })
+        )}
+      </div>
 
     </div>
   );
