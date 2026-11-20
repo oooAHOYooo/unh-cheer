@@ -1,0 +1,166 @@
+import { Clip, CheerEvent } from '../types/cheer';
+
+export const INITIAL_CLIPS: Clip[] = [
+  {
+    id: 'clip-1',
+    title: 'Standing Back Tuck - Clean Landing Drill',
+    skillCategory: 'Tumbling & Flips',
+    athletes: ['Emma Vance', 'Coach Sarah'],
+    // Sample high-quality web MP4 video
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80',
+    duration: '0:15',
+    targetPlatforms: ['Instagram Reel', 'TikTok'],
+    status: 'coach_approved',
+    coachFeedback: 'Great set and height on the tuck. Stick the landing with chest up. Ready for game day intro reel!',
+    coachRating: 5,
+    tags: ['Standing Tuck', 'Backflip', 'Tumbling', 'Form Drill', 'Clean'],
+    aspectRatio: '9:16',
+    dateRecorded: '2026-11-18',
+    captionDraft: 'Back tucks hit different under the arena lights! ⚡️💙 Emma dialing in the precision for Saturday. #UNHCheer #ChargerPride #Tumbling #Backflip #CollegeCheer',
+    bucketKey: 'tumbling/2026-11-18-emma-standing-tuck.mp4'
+  },
+  {
+    id: 'clip-2',
+    title: 'Roundoff Back Handspring Full Twist',
+    skillCategory: 'Tumbling & Flips',
+    athletes: ['Jordan Hayes'],
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1547483238-f400e65ccd56?auto=format&fit=crop&w=800&q=80',
+    duration: '0:12',
+    targetPlatforms: ['TikTok', 'Instagram Reel', 'YouTube Shorts'],
+    status: 'ready_to_post',
+    coachFeedback: 'Explosive pass! Speed into the roundoff was phenomenal. Perfect for TikTok hype drop.',
+    coachRating: 5,
+    tags: ['Full Twist', 'Roundoff', 'Back Handspring', 'Power Tumbling'],
+    aspectRatio: '9:16',
+    dateRecorded: '2026-11-17',
+    captionDraft: 'Full twist sequence unlocked! 🔥 Put some respect on Jordan’s tumbling pass! Who wants to see the slow-mo breakdown? ⬇️ #UNHCheer #ChargerNation #CheerTumbling',
+    bucketKey: 'tumbling/2026-11-17-jordan-full-twist.mp4'
+  },
+  {
+    id: 'clip-3',
+    title: 'High-to-High Tic-Toc Partner Stunt',
+    skillCategory: 'Stunts & Partner',
+    athletes: ['Brianna Miller (Flyer)', 'Marcus Cole (Base)', 'Elena Rossi (Backspot)'],
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1508215885820-468079233ce9?auto=format&fit=crop&w=800&q=80',
+    duration: '0:18',
+    targetPlatforms: ['Instagram Reel', 'TikTok'],
+    status: 'needs_review',
+    coachFeedback: 'Hold the heel stretch a fraction of a second longer before the switch. Bases keep locked out.',
+    coachRating: 4,
+    tags: ['Partner Stunt', 'Tic-Toc', 'Heel Stretch', 'Extension', 'Coed'],
+    aspectRatio: '9:16',
+    dateRecorded: '2026-11-19',
+    captionDraft: 'Solid stunts don’t happen by accident. Repetition builds perfection. High-to-high work today! 💙💛 #UNHCheer #StuntSquad #CoedStunts',
+    bucketKey: 'stunts/2026-11-19-tictoc-brianna-marcus.mp4'
+  },
+  {
+    id: 'clip-4',
+    title: 'NCA 2-1-2 Pyramid Transition Sequence',
+    skillCategory: 'Pyramids',
+    athletes: ['Full Team Stunt Groups'],
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=800&q=80',
+    duration: '0:24',
+    targetPlatforms: ['Instagram Reel', 'YouTube Shorts'],
+    status: 'revision_requested',
+    coachFeedback: 'Center flyer came down slightly early on the count of 4. Need to re-film count 1-8 during Friday scrimmage.',
+    coachRating: 3,
+    tags: ['Pyramid', 'NCA Nationals', 'Transitions', 'Routine Section', 'CollegeCheer'],
+    aspectRatio: '16:9',
+    dateRecorded: '2026-11-16',
+    captionDraft: 'Pyramid work in progress for Nationals prep. Every count matters. ⏳ #RoadToNationals #UNHCheer #CheerPyramid',
+    bucketKey: 'pyramids/2026-11-16-pyramid-runthrough.mp4'
+  },
+  {
+    id: 'clip-5',
+    title: 'Basket Toss - Kick Full Twist',
+    skillCategory: 'Basket Tosses',
+    athletes: ['Kayla Diaz (Flyer)', 'Group 2'],
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80',
+    duration: '0:10',
+    targetPlatforms: ['TikTok', 'Instagram Reel'],
+    status: 'coach_approved',
+    coachFeedback: 'Phenomenal height and arch on the kick! Cradle was secure and cushioned well. Approved.',
+    coachRating: 5,
+    tags: ['Basket Toss', 'Kick Full', 'High Flyer', 'Crowd Pleaser'],
+    aspectRatio: '9:16',
+    dateRecorded: '2026-11-15',
+    captionDraft: 'Catching air! 🚀 Kayla launching with the Kick Full. Wait for that height at the apex! 🤯 #UNHCheer #BasketToss #Acrobatics',
+    bucketKey: 'baskets/2026-11-15-kayla-kickfull.mp4'
+  },
+  {
+    id: 'clip-6',
+    title: 'Game Day Band Chant & Megaphone Drill',
+    skillCategory: 'Game Day & Chants',
+    athletes: ['Captains: Sam & Tyler', 'Full Squad'],
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80',
+    duration: '0:30',
+    targetPlatforms: ['Instagram Story', 'X (Twitter)', 'Instagram Reel'],
+    status: 'posted',
+    coachFeedback: 'Energized motions and sharp voice projection. Already posted to UNH Athletics Instagram!',
+    coachRating: 5,
+    tags: ['Game Day', 'Sideline', 'Fight Song', 'Megaphones', 'ChargerPride'],
+    aspectRatio: '16:9',
+    dateRecorded: '2026-11-14',
+    captionDraft: 'Saturday in the stadium hits different! Come support the team this weekend at 1:00 PM! 💙💛⚡️ #UNHCheer #ChargerNation #GameDayReady',
+    bucketKey: 'gameday/2026-11-14-sideline-chant.mp4'
+  }
+];
+
+export const INITIAL_EVENTS: CheerEvent[] = [
+  {
+    id: 'evt-1',
+    title: 'Varsity Football Game Day vs Southern Conn',
+    type: 'game_day',
+    date: '2026-11-21',
+    time: '1:00 PM - 4:30 PM',
+    location: 'Ralph F. DellaCamera Stadium',
+    description: 'Game Day performance, pre-game fan alley, halftime routine and sideline cheers.',
+    linkedClipIds: ['clip-1', 'clip-6']
+  },
+  {
+    id: 'evt-2',
+    title: 'Full Team NCA Nationals Choreography Practice',
+    type: 'practice',
+    date: '2026-11-23',
+    time: '6:30 PM - 9:00 PM',
+    location: 'Charger Gymnasium - Mat 1 & 2',
+    description: 'Cleaning pyramid counts 1-32, tumbling synchronization, and video review with Coach Sarah.',
+    linkedClipIds: ['clip-4']
+  },
+  {
+    id: 'evt-3',
+    title: 'Instagram & TikTok "Backflip Mastery" Reel Drop',
+    type: 'social_drop',
+    date: '2026-11-24',
+    time: '4:00 PM',
+    location: 'Social Media Channels',
+    description: 'Scheduled drop of Jordan’s full twist and Emma’s clean back tuck drill. Tag athletic dept.',
+    linkedClipIds: ['clip-1', 'clip-2']
+  },
+  {
+    id: 'evt-4',
+    title: 'Cheer & Dance Holiday Showcase',
+    type: 'competition',
+    date: '2026-12-05',
+    time: '5:00 PM - 8:00 PM',
+    location: 'Beckerman Recreation Center',
+    description: 'Annual winter showcase for campus community, alumni, and recruit prospects.',
+    linkedClipIds: ['clip-3', 'clip-5']
+  },
+  {
+    id: 'evt-5',
+    title: 'Coach & Media Content Review Meeting',
+    type: 'team_meeting',
+    date: '2026-11-25',
+    time: '11:00 AM - 12:00 PM',
+    location: 'Athletics Conference Room B / Zoom',
+    description: 'Weekly review of bucket video uploads, content approval, and next week filming targets.',
+    linkedClipIds: ['clip-3', 'clip-4']
+  }
+];
