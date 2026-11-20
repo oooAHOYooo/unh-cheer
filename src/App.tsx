@@ -6,6 +6,7 @@ import { VideoModal } from './components/VideoModal';
 import { AddClipModal } from './components/AddClipModal';
 import { CoachReviewTab } from './components/CoachReviewTab';
 import { CalendarView } from './components/CalendarView';
+import { TryoutCurriculum } from './components/TryoutCurriculum';
 import { BucketHelperModal } from './components/BucketHelperModal';
 import { INITIAL_CLIPS, INITIAL_EVENTS } from './data/initialData';
 import { Clip, CheerEvent, SkillCategory } from './types/cheer';
@@ -46,7 +47,7 @@ export function App() {
   });
 
   // UI state
-  const [activeTab, setActiveTab] = useState<'library' | 'coach' | 'calendar'>('library');
+  const [activeTab, setActiveTab] = useState<'library' | 'coach' | 'calendar' | 'tryouts'>('library');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -208,6 +209,24 @@ export function App() {
         {activeTab === 'library' && (
           <div className="space-y-4">
             
+            {/* Tryouts Callout Banner */}
+            <div className="bg-white border-l-4 border-[#FFC72C] p-3 rounded-md border border-slate-200/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-[#002D62] text-white rounded-sm">
+                  Tryout Prep
+                </span>
+                <span className="text-xs font-semibold text-slate-800">
+                  New to the team or trying out? Review the required tumbling, stunting, and jumps curriculum.
+                </span>
+              </div>
+              <button
+                onClick={() => setActiveTab('tryouts')}
+                className="text-xs font-bold text-[#002D62] hover:underline flex items-center gap-1 shrink-0"
+              >
+                View Tryout Curriculum →
+              </button>
+            </div>
+
             {/* Filter Bar - No Pills, Simple Clean Rectangles */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-md border border-slate-200/90 shadow-sm">
               
@@ -305,6 +324,14 @@ export function App() {
             events={events}
             onAddEvent={handleAddEvent}
             onDeleteEvent={handleDeleteEvent}
+          />
+        )}
+
+        {/* Tab 4: Tryout Curriculum & Prep */}
+        {activeTab === 'tryouts' && (
+          <TryoutCurriculum
+            onSelectClip={(c) => setSelectedClip(c)}
+            clips={clips}
           />
         )}
 

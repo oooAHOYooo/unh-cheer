@@ -12,8 +12,8 @@ import {
 } from 'lucide-react';
 
 interface HeaderProps {
-  activeTab: 'library' | 'coach' | 'calendar';
-  setActiveTab: (tab: 'library' | 'coach' | 'calendar') => void;
+  activeTab: 'library' | 'coach' | 'calendar' | 'tryouts';
+  setActiveTab: (tab: 'library' | 'coach' | 'calendar' | 'tryouts') => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   onOpenAddModal: () => void;
@@ -184,6 +184,18 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Calendar className="w-3.5 h-3.5" />
             Schedule & Events
+          </button>
+
+          <button
+            onClick={() => setActiveTab('tryouts')}
+            className={`py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 border-b-2 transition-colors ${
+              activeTab === 'tryouts'
+                ? 'border-[#FFC72C] text-[#FFC72C]'
+                : 'border-transparent text-blue-200 hover:text-white'
+            }`}
+          >
+            <span className="w-2 h-2 rounded-xs bg-[#FFC72C]" />
+            Tryout Curriculum
           </button>
         </div>
 
