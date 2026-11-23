@@ -56,6 +56,24 @@ export const INITIAL_CLIPS: Clip[] = [
     tags: ['Interview', 'Full Master', 'Color Graded']
   },
   {
+    id: 'interview-4',
+    title: 'UNH Cheer Athlete Interview - Part 4 (Color Graded / Uncut)',
+    skillCategory: 'Interviews',
+    folder: 'Interviews',
+    athletes: ['New Haven Cheer Athletes'],
+    thumbnailUrl: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=800&q=80',
+    videoUrl: 'https://storage.googleapis.com/ag-photography/2026%20-%20ECM%20-%20BUCKET/2026%20-%20UNH%20-%20EXPORTS/Interviews/Interviews_4.mp4',
+    bucketKey: '2026 - ECM - BUCKET/2026 - UNH - EXPORTS/Interviews/Interviews_4.mp4',
+    fileSize: '71.1 MB',
+    duration: 'Full Master',
+    aspectRatio: '16:9',
+    status: 'coach_approved',
+    coachFeedback: 'Color graded uncut athlete interview reel. Ready for download/viewing.',
+    dateRecorded: '2026-11-23',
+    captionDraft: 'UNH Cheer interview series Part 4! Athlete stories, preparation, and team goals. ⚡️ #UNHCheer #ChargerNation',
+    tags: ['Interview', 'Full Master', 'Color Graded', 'Athletes']
+  },
+  {
     id: 'clip-1',
     title: 'Standing Back Tuck - Clean Landing Drill',
     skillCategory: 'Tumbling & Flips',

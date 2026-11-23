@@ -26,9 +26,9 @@ export function App() {
   // Persistence state with auto-merger for newly added interview master exports
   const [clips, setClips] = useState<Clip[]>(() => {
     try {
-      const saved = localStorage.getItem('unh_cheer_clips_v3');
+      const saved = localStorage.getItem('unh_cheer_clips_v4');
       if (saved) return JSON.parse(saved);
-      const prev = localStorage.getItem('unh_cheer_clips_v2');
+      const prev = localStorage.getItem('unh_cheer_clips_v3') || localStorage.getItem('unh_cheer_clips_v2');
       if (prev) {
         const parsed: Clip[] = JSON.parse(prev);
         const existingIds = new Set(parsed.map(c => c.id));
@@ -68,7 +68,7 @@ export function App() {
   // Sync to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('unh_cheer_clips_v3', JSON.stringify(clips));
+      localStorage.setItem('unh_cheer_clips_v4', JSON.stringify(clips));
     } catch (e) {
       console.error('Failed to save clips', e);
     }
@@ -185,7 +185,11 @@ export function App() {
   });
 
   const pendingReviewCount = clips.filter(c => c.status === 'needs_review').length;
-  const interviewCount = clips.filter(c => c.skillCategory === 'Interviews').length;
+  const interviewClips = clips.filter(c => c.skillCategory === 'Interviews');
+  const interviewCount = interviewClips.length;
+  const interviewTotalMB = interviewClips
+    .reduce((acc, c) => acc + (parseFloat(c.fileSize || '0') || 0), 0)
+    .toFixed(1);
 
   return (
     <div className="min-h-screen bg-[#f0f4f9] text-slate-900 flex flex-col font-sans">
@@ -240,7 +244,7 @@ export function App() {
               {/* View Switcher & Quick Stats */}
               <div className="flex items-center gap-3 shrink-0">
                 <span className="text-xs font-mono text-slate-500 hidden sm:inline">
-                  {interviewCount} Full Interviews (404 MB)
+                  {interviewCount} Full Interviews ({interviewTotalMB} MB)
                 </span>
 
                 <div className="flex items-center bg-slate-100 p-0.5 rounded-sm border border-slate-200 text-xs">
