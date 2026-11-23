@@ -73,12 +73,26 @@ export const ClipCard: React.FC<ClipCardProps> = ({
     >
       {/* Thumbnail Container */}
       <div className="relative aspect-video bg-slate-900 overflow-hidden">
-        <img 
-          src={clip.thumbnailUrl} 
-          alt={clip.title}
-          className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200"
-          loading="lazy"
-        />
+        {clip.thumbnailUrl ? (
+          <img 
+            src={clip.thumbnailUrl} 
+            alt={clip.title}
+            className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200"
+            loading="lazy"
+          />
+        ) : clip.videoUrl ? (
+          <video
+            src={`${clip.videoUrl}#t=1.0`}
+            preload="metadata"
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-[#001f44] flex items-center justify-center text-blue-200">
+            <Film className="w-8 h-8 opacity-40" />
+          </div>
+        )}
 
         {/* Play Icon Overlay */}
         <div className="absolute inset-0 bg-slate-900/30 group-hover:bg-slate-900/10 flex items-center justify-center transition-colors">

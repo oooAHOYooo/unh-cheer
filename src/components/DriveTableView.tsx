@@ -83,13 +83,25 @@ export const DriveTableView: React.FC<DriveTableViewProps> = ({
                 {/* File Title & Icon */}
                 <td className="py-3 px-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-9 h-9 bg-slate-900 rounded-sm overflow-hidden shrink-0 relative flex items-center justify-center">
-                      <img 
-                        src={clip.thumbnailUrl} 
-                        alt="" 
-                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100"
-                      />
-                      <Play className="w-3 h-3 text-white absolute fill-white" />
+                    <div className="w-12 h-8 bg-slate-900 rounded-sm overflow-hidden shrink-0 relative flex items-center justify-center">
+                      {clip.thumbnailUrl ? (
+                        <img 
+                          src={clip.thumbnailUrl} 
+                          alt="" 
+                          className="w-full h-full object-cover opacity-85 group-hover:opacity-100"
+                        />
+                      ) : clip.videoUrl ? (
+                        <video 
+                          src={`${clip.videoUrl}#t=1.0`}
+                          preload="metadata"
+                          muted
+                          playsInline
+                          className="w-full h-full object-cover opacity-85 group-hover:opacity-100"
+                        />
+                      ) : (
+                        <Film className="w-4 h-4 text-blue-300" />
+                      )}
+                      <Play className="w-3 h-3 text-white absolute fill-white drop-shadow" />
                     </div>
                     <div>
                       <span className="font-bold text-slate-900 group-hover:text-[#002D62] block line-clamp-1">

@@ -23,17 +23,20 @@ const CATEGORIES: SkillCategory[] = [
 ];
 
 export function App() {
-  // Persistence state with auto-merger for newly added interview master exports
+  // Persistence state initialized directly with authentic interview masters & real video frames
   const [clips, setClips] = useState<Clip[]>(() => {
     try {
-      const saved = localStorage.getItem('unh_cheer_clips_v4');
+      const saved = localStorage.getItem('unh_cheer_clips_v5');
       if (saved) return JSON.parse(saved);
-      const prev = localStorage.getItem('unh_cheer_clips_v3') || localStorage.getItem('unh_cheer_clips_v2');
+      const prev = localStorage.getItem('unh_cheer_clips_v4');
       if (prev) {
         const parsed: Clip[] = JSON.parse(prev);
-        const existingIds = new Set(parsed.map(c => c.id));
+        // Strip out any legacy fake placeholder clips with unsplash urls
+        const clean = parsed.filter(c => !c.thumbnailUrl?.includes('unsplash.com'));
+        // Ensure all real initial interview clips are included
+        const existingIds = new Set(clean.map(c => c.id));
         const toAdd = INITIAL_CLIPS.filter(c => !existingIds.has(c.id));
-        return [...toAdd, ...parsed];
+        return [...toAdd, ...clean];
       }
     } catch (e) {
       console.error('Error loading clips', e);
@@ -68,7 +71,7 @@ export function App() {
   // Sync to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('unh_cheer_clips_v4', JSON.stringify(clips));
+      localStorage.setItem('unh_cheer_clips_v5', JSON.stringify(clips));
     } catch (e) {
       console.error('Failed to save clips', e);
     }

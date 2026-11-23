@@ -126,11 +126,25 @@ export const CoachReviewTab: React.FC<CoachReviewTabProps> = ({
                   onClick={() => onSelectClip(clip)}
                   className="relative w-full md:w-48 aspect-video bg-slate-900 rounded-sm overflow-hidden shrink-0 cursor-pointer group"
                 >
-                  <img 
-                    src={clip.thumbnailUrl} 
-                    alt={clip.title}
-                    className="w-full h-full object-cover group-hover:scale-102 transition-transform"
-                  />
+                  {clip.thumbnailUrl ? (
+                    <img 
+                      src={clip.thumbnailUrl} 
+                      alt={clip.title}
+                      className="w-full h-full object-cover group-hover:scale-102 transition-transform"
+                    />
+                  ) : clip.videoUrl ? (
+                    <video 
+                      src={`${clip.videoUrl}#t=1.0`}
+                      preload="metadata"
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover group-hover:scale-102 transition-transform"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-[#001f44] flex items-center justify-center text-blue-200">
+                      <Play className="w-6 h-6 opacity-40" />
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 flex items-center justify-center">
                     <div className="w-8 h-8 rounded-sm bg-[#002D62] text-white flex items-center justify-center shadow-md">
                       <Play className="w-3.5 h-3.5 fill-white ml-0.5" />

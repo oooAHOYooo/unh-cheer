@@ -48,13 +48,8 @@ export const AddClipModal: React.FC<AddClipModalProps> = ({
       .map(s => s.trim())
       .filter(Boolean);
 
-    // Default authentic cheer photo if thumbnail is left blank
-    const finalThumbnail = thumbnailUrl.trim() || 
-      (skillCategory === 'Tumbling & Flips' 
-        ? 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80'
-        : skillCategory === 'Stunts & Partner'
-        ? 'https://images.unsplash.com/photo-1508215885820-468079233ce9?auto=format&fit=crop&w=800&q=80'
-        : 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80');
+    // Use user-provided thumbnail, or leave blank to automatically display the video frame
+    const finalThumbnail = thumbnailUrl.trim() || '';
 
     const newClip: Clip = {
       id: `clip-${Date.now()}`,
