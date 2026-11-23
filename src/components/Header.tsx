@@ -4,16 +4,15 @@ import {
   Database, 
   Download, 
   Upload, 
-  Calendar, 
   Grid, 
-  CheckSquare, 
   Search,
-  ExternalLink
+  ExternalLink,
+  Layers
 } from 'lucide-react';
 
 interface HeaderProps {
-  activeTab: 'library' | 'coach' | 'calendar' | 'tryouts';
-  setActiveTab: (tab: 'library' | 'coach' | 'calendar' | 'tryouts') => void;
+  activeTab: 'library' | 'features';
+  setActiveTab: (tab: 'library' | 'features') => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   onOpenAddModal: () => void;
@@ -60,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               </div>
               <p className="text-xs text-blue-200">
-                Official Content Library & Coach Alexis Vano Review Hub
+                Official Content Library & Video Vault
               </p>
             </div>
           </div>
@@ -73,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
                 type="text" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search backflips, stunts, athletes..."
+                placeholder="Search interviews, stunts, athletes..."
                 className="w-full pl-9 pr-3 py-1.5 bg-[#001f44] border border-blue-900 rounded-md text-xs text-white placeholder-blue-300 focus:outline-none focus:border-[#FFC72C] transition-colors"
               />
               {searchQuery && (
@@ -94,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
               target="_blank"
               rel="noopener noreferrer"
               className="hidden lg:inline-flex items-center gap-1 px-2.5 py-1.5 text-xs text-blue-200 hover:text-white transition-colors"
-              title="Official Roster & Info"
+              title="Official Athletics Page"
             >
               <span>Athletics Site</span>
               <ExternalLink className="w-3 h-3" />
@@ -106,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#001f44] hover:bg-blue-900 border border-blue-800 rounded-md transition-colors"
             >
               <Database className="w-3.5 h-3.5 text-[#FFC72C]" />
-              <span className="hidden sm:inline">Storage Bucket</span>
+              <span className="hidden sm:inline">Bucket Settings</span>
             </button>
 
             <button
@@ -143,7 +142,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         </div>
 
-        {/* Tab Navigation - Simplified, No Pills */}
+        {/* Tab Navigation - Starts with Grid / Library, Additional Features separated */}
         <div className="flex space-x-6 border-t border-blue-900/60 pt-1">
           <button
             onClick={() => setActiveTab('library')}
@@ -154,48 +153,24 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             <Grid className="w-3.5 h-3.5" />
-            Content Library
+            Media Grid & Vault
           </button>
 
           <button
-            onClick={() => setActiveTab('coach')}
+            onClick={() => setActiveTab('features')}
             className={`py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 border-b-2 transition-colors ${
-              activeTab === 'coach'
+              activeTab === 'features'
                 ? 'border-[#FFC72C] text-[#FFC72C]'
                 : 'border-transparent text-blue-200 hover:text-white'
             }`}
           >
-            <CheckSquare className="w-3.5 h-3.5" />
-            Coach Review
+            <Layers className="w-3.5 h-3.5" />
+            Additional Features
             {pendingReviewCount > 0 && (
               <span className="ml-1 px-1.5 py-0.2 bg-[#FFC72C] text-[#002D62] text-[10px] font-black rounded-sm">
                 {pendingReviewCount}
               </span>
             )}
-          </button>
-
-          <button
-            onClick={() => setActiveTab('calendar')}
-            className={`py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 border-b-2 transition-colors ${
-              activeTab === 'calendar'
-                ? 'border-[#FFC72C] text-[#FFC72C]'
-                : 'border-transparent text-blue-200 hover:text-white'
-            }`}
-          >
-            <Calendar className="w-3.5 h-3.5" />
-            Schedule & Events
-          </button>
-
-          <button
-            onClick={() => setActiveTab('tryouts')}
-            className={`py-2 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 border-b-2 transition-colors ${
-              activeTab === 'tryouts'
-                ? 'border-[#FFC72C] text-[#FFC72C]'
-                : 'border-transparent text-blue-200 hover:text-white'
-            }`}
-          >
-            <span className="w-2 h-2 rounded-xs bg-[#FFC72C]" />
-            Tryout Curriculum
           </button>
         </div>
 

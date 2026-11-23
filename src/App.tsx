@@ -11,7 +11,17 @@ import { TryoutCurriculum } from './components/TryoutCurriculum';
 import { BucketHelperModal } from './components/BucketHelperModal';
 import { INITIAL_CLIPS, INITIAL_EVENTS } from './data/initialData';
 import { Clip, CheerEvent, SkillCategory } from './types/cheer';
-import { Plus, Film, LayoutGrid, List, Folder, HardDrive, Download, Sparkles } from 'lucide-react';
+import { 
+  Plus, 
+  Film, 
+  LayoutGrid, 
+  List, 
+  Folder, 
+  CheckSquare, 
+  Calendar, 
+  Award,
+  Sparkles 
+} from 'lucide-react';
 
 const CATEGORIES: SkillCategory[] = [
   'Interviews',
@@ -23,7 +33,7 @@ const CATEGORIES: SkillCategory[] = [
 ];
 
 export function App() {
-  // Persistence state initialized directly with authentic interview masters & real video frames
+  // Persistence state with auto-merger for authentic interview master exports
   const [clips, setClips] = useState<Clip[]>(() => {
     try {
       const saved = localStorage.getItem('unh_cheer_clips_v5');
@@ -31,9 +41,7 @@ export function App() {
       const prev = localStorage.getItem('unh_cheer_clips_v4');
       if (prev) {
         const parsed: Clip[] = JSON.parse(prev);
-        // Strip out any legacy fake placeholder clips with unsplash urls
         const clean = parsed.filter(c => !c.thumbnailUrl?.includes('unsplash.com'));
-        // Ensure all real initial interview clips are included
         const existingIds = new Set(clean.map(c => c.id));
         const toAdd = INITIAL_CLIPS.filter(c => !existingIds.has(c.id));
         return [...toAdd, ...clean];
@@ -58,8 +66,9 @@ export function App() {
     return localStorage.getItem('unh_cheer_bucket_prefix') || '';
   });
 
-  // UI state
-  const [activeTab, setActiveTab] = useState<'library' | 'coach' | 'calendar' | 'tryouts'>('library');
+  // UI state: defaults directly to library and starts with the grid
+  const [activeTab, setActiveTab] = useState<'library' | 'features'>('library');
+  const [activeFeature, setActiveFeature] = useState<'coach' | 'schedule' | 'tryouts'>('coach');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -211,76 +220,13 @@ export function App() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
         
-        {/* Metrics Overview */}
-        <MetricsOverview
-          clips={clips}
-          events={events}
-          onFilterStatus={(st) => {
-            setSelectedStatus(st);
-            setActiveTab('library');
-          }}
-        />
-
-        {/* Tab 1: Content Library */}
+        {/* Tab 1: Content Library (Starts directly with the Grid!) */}
         {activeTab === 'library' && (
           <div className="space-y-4">
             
-            {/* Google Drive Style Library Overview Banner */}
-            <div className="bg-white border-l-4 border-[#002D62] p-4 rounded-md border border-slate-200/90 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 bg-[#002D62] text-white rounded-sm flex items-center gap-1">
-                    <Folder className="w-3 h-3 text-[#FFC72C]" />
-                    Media Library & Drive
-                  </span>
-                  <span className="text-xs font-bold text-slate-700">
-                    Full uncut interviews & practice footage
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500">
-                  Organized content vault with in-browser video playback and direct master MP4 download links for Coach Alexis Vano and the team.
-                </p>
-              </div>
-
-              {/* View Switcher & Quick Stats */}
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="text-xs font-mono text-slate-500 hidden sm:inline">
-                  {interviewCount} Full Interviews ({interviewTotalMB} MB)
-                </span>
-
-                <div className="flex items-center bg-slate-100 p-0.5 rounded-sm border border-slate-200 text-xs">
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`px-2 py-1 font-semibold flex items-center gap-1 rounded-sm transition-colors ${
-                      viewMode === 'grid' 
-                        ? 'bg-[#002D62] text-white shadow-xs' 
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                    title="Grid Card View"
-                  >
-                    <LayoutGrid className="w-3.5 h-3.5" />
-                    <span>Grid</span>
-                  </button>
-
-                  <button
-                    onClick={() => setViewMode('table')}
-                    className={`px-2 py-1 font-semibold flex items-center gap-1 rounded-sm transition-colors ${
-                      viewMode === 'table' 
-                        ? 'bg-[#002D62] text-white shadow-xs' 
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                    title="Drive Table View (Name, Size, View, Download)"
-                  >
-                    <List className="w-3.5 h-3.5" />
-                    <span>Drive List</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Filter Bar */}
+            {/* Filter Bar & View Controls - Simple & Direct */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-md border border-slate-200/90 shadow-sm">
               
               {/* Category / Folder Filters */}
@@ -309,32 +255,58 @@ export function App() {
                           : isInterview ? 'bg-amber-100/70 text-[#002D62] hover:bg-amber-100' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
-                      {isInterview && <Sparkles className="w-3 h-3 text-[#002D62]" />}
                       {cat} {count > 0 && `(${count})`}
                     </button>
                   );
                 })}
               </div>
 
-              {/* Status Filter */}
+              {/* View Switcher: Grid vs Drive Table */}
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Status:</span>
+                <div className="flex items-center bg-slate-100 p-0.5 rounded-sm border border-slate-200 text-xs">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`px-2.5 py-1 font-semibold flex items-center gap-1 rounded-sm transition-colors ${
+                      viewMode === 'grid' 
+                        ? 'bg-[#002D62] text-white shadow-xs' 
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                    title="Grid View"
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>Grid</span>
+                  </button>
+
+                  <button
+                    onClick={() => setViewMode('table')}
+                    className={`px-2.5 py-1 font-semibold flex items-center gap-1 rounded-sm transition-colors ${
+                      viewMode === 'table' 
+                        ? 'bg-[#002D62] text-white shadow-xs' 
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                    title="Drive Table View"
+                  >
+                    <List className="w-3.5 h-3.5" />
+                    <span>List</span>
+                  </button>
+                </div>
+
+                {/* Status Filter */}
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
                   className="px-2.5 py-1 bg-slate-50 border border-slate-300 rounded-sm text-xs text-slate-800 font-medium focus:outline-none focus:border-[#002D62]"
                 >
                   <option value="all">All Statuses</option>
-                  <option value="coach_approved">✅ Approved</option>
-                  <option value="needs_review">⏳ Needs Review</option>
-                  <option value="ready_to_post">🚀 Ready to Post</option>
-                  <option value="revision_requested">🔄 Needs Retake</option>
+                  <option value="coach_approved">Approved</option>
+                  <option value="needs_review">Needs Review</option>
+                  <option value="ready_to_post">Ready to Post</option>
                 </select>
               </div>
 
             </div>
 
-            {/* Clips View: Either Drive Table or Grid */}
+            {/* Video Content: Starts with the Grid! */}
             {filteredClips.length === 0 ? (
               <div className="bg-white border border-slate-200 rounded-md p-10 text-center space-y-2.5 shadow-sm">
                 <Film className="w-10 h-10 text-slate-400 mx-auto" />
@@ -369,30 +341,87 @@ export function App() {
           </div>
         )}
 
-        {/* Tab 2: Coach Review */}
-        {activeTab === 'coach' && (
-          <CoachReviewTab
-            clips={clips}
-            onSelectClip={(c) => setSelectedClip(c)}
-            onUpdateClip={handleUpdateClip}
-          />
-        )}
+        {/* Tab 2: Additional Features (Houses Coach Review, Schedule, Tryouts & Overview) */}
+        {activeTab === 'features' && (
+          <div className="space-y-5">
+            
+            {/* Feature Sub-Navigation Tabs - Clean Rectangles */}
+            <div className="flex items-center gap-2 bg-white p-2.5 rounded-md border border-slate-200 shadow-sm overflow-x-auto">
+              <button
+                onClick={() => setActiveFeature('coach')}
+                className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+                  activeFeature === 'coach'
+                    ? 'bg-[#002D62] text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                <CheckSquare className="w-3.5 h-3.5 text-[#FFC72C]" />
+                Coach Alexis Vano Review Queue
+                {pendingReviewCount > 0 && (
+                  <span className="ml-1 px-1.5 py-0.2 bg-[#FFC72C] text-[#002D62] text-[10px] font-black rounded-sm">
+                    {pendingReviewCount}
+                  </span>
+                )}
+              </button>
 
-        {/* Tab 3: Events & Schedule */}
-        {activeTab === 'calendar' && (
-          <CalendarView
-            events={events}
-            onAddEvent={handleAddEvent}
-            onDeleteEvent={handleDeleteEvent}
-          />
-        )}
+              <button
+                onClick={() => setActiveFeature('schedule')}
+                className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+                  activeFeature === 'schedule'
+                    ? 'bg-[#002D62] text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                <Calendar className="w-3.5 h-3.5 text-[#FFC72C]" />
+                Team Schedule & Events
+              </button>
 
-        {/* Tab 4: Tryout Curriculum & Prep */}
-        {activeTab === 'tryouts' && (
-          <TryoutCurriculum
-            onSelectClip={(c) => setSelectedClip(c)}
-            clips={clips}
-          />
+              <button
+                onClick={() => setActiveFeature('tryouts')}
+                className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+                  activeFeature === 'tryouts'
+                    ? 'bg-[#002D62] text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                <Award className="w-3.5 h-3.5 text-[#FFC72C]" />
+                Tryout Prep & Curriculum
+              </button>
+            </div>
+
+            {/* Metrics Overview housed inside Features */}
+            <MetricsOverview
+              clips={clips}
+              events={events}
+            />
+
+            {/* Sub-Feature 1: Coach Review */}
+            {activeFeature === 'coach' && (
+              <CoachReviewTab
+                clips={clips}
+                onSelectClip={(c) => setSelectedClip(c)}
+                onUpdateClip={handleUpdateClip}
+              />
+            )}
+
+            {/* Sub-Feature 2: Schedule & Events */}
+            {activeFeature === 'schedule' && (
+              <CalendarView
+                events={events}
+                onAddEvent={handleAddEvent}
+                onDeleteEvent={handleDeleteEvent}
+              />
+            )}
+
+            {/* Sub-Feature 3: Tryout Prep */}
+            {activeFeature === 'tryouts' && (
+              <TryoutCurriculum
+                onSelectClip={(c) => setSelectedClip(c)}
+                clips={clips}
+              />
+            )}
+
+          </div>
         )}
 
       </main>

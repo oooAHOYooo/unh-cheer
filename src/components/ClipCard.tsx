@@ -4,13 +4,9 @@ import {
   MessageSquare, 
   User, 
   Download,
-  CheckCircle,
-  AlertTriangle,
-  RotateCcw,
-  Film,
-  HardDrive
+  Film
 } from 'lucide-react';
-import { Clip, ReviewStatus } from '../types/cheer';
+import { Clip } from '../types/cheer';
 
 interface ClipCardProps {
   clip: Clip;
@@ -21,35 +17,6 @@ export const ClipCard: React.FC<ClipCardProps> = ({
   clip,
   onSelect,
 }) => {
-  const getStatusBadge = (status: ReviewStatus) => {
-    switch (status) {
-      case 'coach_approved':
-        return (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-            <CheckCircle className="w-3 h-3" /> Approved
-          </span>
-        );
-      case 'needs_review':
-        return (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
-            <AlertTriangle className="w-3 h-3" /> Needs Review
-          </span>
-        );
-      case 'revision_requested':
-        return (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-300">
-            <RotateCcw className="w-3 h-3" /> Retake
-          </span>
-        );
-      case 'ready_to_post':
-        return (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[11px] font-bold bg-blue-100 text-[#002D62] border border-blue-300">
-            Ready to Post
-          </span>
-        );
-    }
-  };
-
   const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (clip.videoUrl) {
@@ -101,16 +68,11 @@ export const ClipCard: React.FC<ClipCardProps> = ({
           </div>
         </div>
 
-        {/* Top Badges */}
-        <div className="absolute top-2 left-2 flex items-center gap-1.5">
+        {/* Top Type Badge - Just the type up top, no extra pills */}
+        <div className="absolute top-2 left-2">
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-sm bg-[#002D62] text-white uppercase tracking-wider shadow-sm">
             {clip.skillCategory}
           </span>
-          {clip.skillCategory === 'Interviews' && (
-            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-sm bg-[#FFC72C] text-[#002D62] uppercase tracking-wider shadow-sm">
-              Color Graded
-            </span>
-          )}
         </div>
 
         {/* Bottom Tag */}
@@ -129,11 +91,9 @@ export const ClipCard: React.FC<ClipCardProps> = ({
       {/* Content Info */}
       <div className="p-3.5 flex-1 flex flex-col justify-between space-y-3">
         <div>
-          <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="font-bold text-slate-900 text-sm group-hover:text-[#002D62] transition-colors line-clamp-1">
-              {clip.title}
-            </h3>
-          </div>
+          <h3 className="font-bold text-slate-900 text-sm group-hover:text-[#002D62] transition-colors line-clamp-1 mb-1">
+            {clip.title}
+          </h3>
 
           {/* Athletes / Participants */}
           {clip.athletes && clip.athletes.length > 0 && (
@@ -143,22 +103,22 @@ export const ClipCard: React.FC<ClipCardProps> = ({
             </div>
           )}
 
-          {/* Coach Feedback Snippet */}
+          {/* Feedback Snippet if any */}
           {clip.coachFeedback && (
             <div className="p-2 bg-slate-50 border border-slate-200 rounded-sm text-xs text-slate-700 flex items-start gap-1.5">
               <MessageSquare className="w-3.5 h-3.5 text-[#002D62] shrink-0 mt-0.5" />
-              <p className="line-clamp-2 italic">
+              <p className="line-clamp-2 italic text-[11px]">
                 "{clip.coachFeedback}"
               </p>
             </div>
           )}
         </div>
 
-        {/* Bottom Actions: View & Download Buttons */}
+        {/* Bottom Actions: Recorded Date & View/Download Buttons */}
         <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
-          <div>
-            {getStatusBadge(clip.status)}
-          </div>
+          <span className="text-[11px] text-slate-400 font-mono">
+            {clip.dateRecorded}
+          </span>
 
           <div className="flex items-center gap-1.5">
             <button
@@ -174,7 +134,7 @@ export const ClipCard: React.FC<ClipCardProps> = ({
               <span>View</span>
             </button>
 
-            {clip.videoUrl ? (
+            {clip.videoUrl && (
               <button
                 type="button"
                 onClick={handleDownload}
@@ -184,8 +144,6 @@ export const ClipCard: React.FC<ClipCardProps> = ({
                 <Download className="w-3 h-3" />
                 <span>Download</span>
               </button>
-            ) : (
-              <span className="text-[10px] text-slate-400 font-mono">No MP4</span>
             )}
           </div>
         </div>
