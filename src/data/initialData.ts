@@ -2,6 +2,24 @@ import { Clip, CheerEvent } from '../types/cheer';
 
 export const INITIAL_CLIPS: Clip[] = [
   {
+    id: 'practice-1',
+    title: 'UNH Cheer Practice Session - Clip 1 (Vertical 9:16)',
+    skillCategory: 'Practice & Drills',
+    folder: 'Practice',
+    athletes: ['New Haven Cheer Team', 'Varsity Squad'],
+    thumbnailUrl: '/thumbnails/practice_clip_1.jpg',
+    videoUrl: 'https://storage.googleapis.com/ag-photography/2026%20-%20ECM%20-%20BUCKET/2026%20-%20UNH%20-%20EXPORTS/Clips/Practice/UNH_2026_PRACTICE_CLIP_1.mp4',
+    bucketKey: '2026 - ECM - BUCKET/2026 - UNH - EXPORTS/Clips/Practice/UNH_2026_PRACTICE_CLIP_1.mp4',
+    fileSize: '65.3 MB',
+    duration: '0:47',
+    aspectRatio: '9:16',
+    status: 'coach_approved',
+    coachFeedback: 'Practice routine film. Great review clip for squad timing and stunt transitions.',
+    dateRecorded: '2026-11-23',
+    captionDraft: 'Working hard in the gym! UNH Cheer practice session drill. 💙⚡️ #UNHCheer #ChargerPride #CollegeCheer #WorkHard',
+    tags: ['Practice', 'Routine', 'Vertical Reel', 'Color Graded']
+  },
+  {
     id: 'interview-1',
     title: 'UNH Cheer Athlete Interview - Part 1 (Color Graded / Uncut)',
     skillCategory: 'Interviews',

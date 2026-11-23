@@ -1,5 +1,6 @@
 export type SkillCategory = 
   | 'Interviews'
+  | 'Practice & Drills'
   | 'Tumbling & Flips'
   | 'Stunts & Partner'
   | 'Pyramids'

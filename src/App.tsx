@@ -10,6 +10,8 @@ import { CalendarView } from './components/CalendarView';
 import { TryoutCurriculum } from './components/TryoutCurriculum';
 import { BucketHelperModal } from './components/BucketHelperModal';
 import { SocialExportModal } from './components/SocialExportModal';
+import { TeamPortalView } from './components/TeamPortalView';
+import { TeamVideoModal } from './components/TeamVideoModal';
 import { INITIAL_CLIPS, INITIAL_EVENTS } from './data/initialData';
 import { Clip, CheerEvent, SkillCategory } from './types/cheer';
 import { 
@@ -26,6 +28,7 @@ import {
 
 const CATEGORIES: SkillCategory[] = [
   'Interviews',
+  'Practice & Drills',
   'Tumbling & Flips',
   'Stunts & Partner',
   'Pyramids',
@@ -34,14 +37,12 @@ const CATEGORIES: SkillCategory[] = [
 ];
 
 export function App() {
-  // Persistence state with auto-merger for authentic interview master exports
+  // Persistence state with auto-merger for authentic interview and practice exports
   const [clips, setClips] = useState<Clip[]>(() => {
     try {
-      const saved = localStorage.getItem('unh_cheer_clips_v5');
-      if (saved) return JSON.parse(saved);
-      const prev = localStorage.getItem('unh_cheer_clips_v4');
-      if (prev) {
-        const parsed: Clip[] = JSON.parse(prev);
+      const saved = localStorage.getItem('unh_cheer_clips_v6') || localStorage.getItem('unh_cheer_clips_v5');
+      if (saved) {
+        const parsed: Clip[] = JSON.parse(saved);
         const clean = parsed.filter(c => !c.thumbnailUrl?.includes('unsplash.com'));
         const existingIds = new Set(clean.map(c => c.id));
         const toAdd = INITIAL_CLIPS.filter(c => !existingIds.has(c.id));
@@ -67,6 +68,12 @@ export function App() {
     return localStorage.getItem('unh_cheer_bucket_prefix') || '';
   });
 
+  // Portal mode: 'coach' (full management vault) vs 'team' (athlete-only film room)
+  const [portalMode, setPortalMode] = useState<'coach' | 'team'>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('view') === 'team' ? 'team' : 'coach';
+  });
+
   // UI state: defaults directly to library and starts with the grid
   const [activeTab, setActiveTab] = useState<'library' | 'features'>('library');
   const [activeFeature, setActiveFeature] = useState<'coach' | 'schedule' | 'tryouts'>('coach');
@@ -75,14 +82,36 @@ export function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedClip, setSelectedClip] = useState<Clip | null>(null);
+  const [selectedTeamClip, setSelectedTeamClip] = useState<Clip | null>(null);
   const [selectedExportClip, setSelectedExportClip] = useState<Clip | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isBucketModalOpen, setIsBucketModalOpen] = useState(false);
 
+  // Sync portal mode to URL history
+  const handleSwitchPortal = (mode: 'coach' | 'team') => {
+    setPortalMode(mode);
+    const url = new URL(window.location.href);
+    if (mode === 'team') {
+      url.searchParams.set('view', 'team');
+    } else {
+      url.searchParams.delete('view');
+    }
+    window.history.pushState({}, '', url.toString());
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      setPortalMode(params.get('view') === 'team' ? 'team' : 'coach');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   // Sync to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('unh_cheer_clips_v5', JSON.stringify(clips));
+      localStorage.setItem('unh_cheer_clips_v6', JSON.stringify(clips));
     } catch (e) {
       console.error('Failed to save clips', e);
     }
@@ -205,6 +234,31 @@ export function App() {
     .reduce((acc, c) => acc + (parseFloat(c.fileSize || '0') || 0), 0)
     .toFixed(1);
 
+  if (portalMode === 'team') {
+    return (
+      <>
+        <TeamPortalView
+          clips={clips}
+          onSwitchToCoach={() => handleSwitchPortal('coach')}
+          onOpenTeamClip={(c) => setSelectedTeamClip(c)}
+          onExportClip={(c) => setSelectedExportClip(c)}
+        />
+
+        <TeamVideoModal
+          clip={selectedTeamClip}
+          onClose={() => setSelectedTeamClip(null)}
+          onExportClip={(c) => setSelectedExportClip(c)}
+        />
+
+        <SocialExportModal
+          clip={selectedExportClip}
+          isOpen={!!selectedExportClip}
+          onClose={() => setSelectedExportClip(null)}
+        />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#f0f4f9] text-slate-900 flex flex-col font-sans">
       
@@ -218,6 +272,7 @@ export function App() {
         onOpenBucketModal={() => setIsBucketModalOpen(true)}
         onExportData={handleExportData}
         onImportData={handleImportData}
+        onSwitchToTeam={() => handleSwitchPortal('team')}
         pendingReviewCount={pendingReviewCount}
       />
 

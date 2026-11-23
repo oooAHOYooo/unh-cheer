@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Plus, 
   Database, 
@@ -7,7 +7,10 @@ import {
   Grid, 
   Search,
   ExternalLink,
-  Layers
+  Layers,
+  Users,
+  Copy,
+  Check
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -19,6 +22,7 @@ interface HeaderProps {
   onOpenBucketModal: () => void;
   onExportData: () => void;
   onImportData: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSwitchToTeam: () => void;
   pendingReviewCount: number;
 }
 
@@ -31,9 +35,18 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenBucketModal,
   onExportData,
   onImportData,
+  onSwitchToTeam,
   pendingReviewCount,
 }) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [copiedTeamLink, setCopiedTeamLink] = useState(false);
+
+  const handleCopyTeamLink = () => {
+    const teamUrl = `${window.location.origin}${window.location.pathname}?view=team`;
+    navigator.clipboard.writeText(teamUrl);
+    setCopiedTeamLink(true);
+    setTimeout(() => setCopiedTeamLink(false), 2500);
+  };
 
   return (
     <header className="bg-[#002D62] text-white shadow-md border-b-4 border-[#FFC72C]">
@@ -88,16 +101,35 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Action Buttons */}
           <div className="flex items-center space-x-2">
-            <a
-              href="https://newhavenchargers.com/sports/cheerleading"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center gap-1 px-2.5 py-1.5 text-xs text-blue-200 hover:text-white transition-colors"
-              title="Official Athletics Page"
-            >
-              <span>Athletics Site</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
+            {/* Team Portal Switch & Link Share */}
+            <div className="flex items-center bg-[#001f44] border border-blue-800 rounded-md p-0.5">
+              <button
+                onClick={onSwitchToTeam}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#002D62] bg-[#FFC72C] hover:bg-yellow-400 rounded-sm shadow-xs transition-colors"
+                title="View what the athletes and cheer team see"
+              >
+                <Users className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>Team Portal</span>
+              </button>
+
+              <button
+                onClick={handleCopyTeamLink}
+                className="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-semibold text-blue-200 hover:text-white transition-colors"
+                title="Copy direct link to share with athletes: ?view=team"
+              >
+                {copiedTeamLink ? (
+                  <>
+                    <Check className="w-3 h-3 text-emerald-400" />
+                    <span className="text-[10px] text-emerald-300 font-bold hidden sm:inline">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3 h-3" />
+                    <span className="text-[10px] hidden sm:inline">Share Link</span>
+                  </>
+                )}
+              </button>
+            </div>
 
             <button
               onClick={onOpenBucketModal}
@@ -105,7 +137,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#001f44] hover:bg-blue-900 border border-blue-800 rounded-md transition-colors"
             >
               <Database className="w-3.5 h-3.5 text-[#FFC72C]" />
-              <span className="hidden sm:inline">Bucket Settings</span>
+              <span className="hidden lg:inline">Bucket Settings</span>
             </button>
 
             <button
