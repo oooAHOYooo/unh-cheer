@@ -9,6 +9,7 @@ import { CoachReviewTab } from './components/CoachReviewTab';
 import { CalendarView } from './components/CalendarView';
 import { TryoutCurriculum } from './components/TryoutCurriculum';
 import { BucketHelperModal } from './components/BucketHelperModal';
+import { SocialExportModal } from './components/SocialExportModal';
 import { INITIAL_CLIPS, INITIAL_EVENTS } from './data/initialData';
 import { Clip, CheerEvent, SkillCategory } from './types/cheer';
 import { 
@@ -74,6 +75,7 @@ export function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedClip, setSelectedClip] = useState<Clip | null>(null);
+  const [selectedExportClip, setSelectedExportClip] = useState<Clip | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isBucketModalOpen, setIsBucketModalOpen] = useState(false);
 
@@ -325,6 +327,7 @@ export function App() {
               <DriveTableView
                 clips={filteredClips}
                 onSelectClip={(c) => setSelectedClip(c)}
+                onExportClip={(c) => setSelectedExportClip(c)}
               />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -333,6 +336,7 @@ export function App() {
                     key={clip.id}
                     clip={clip}
                     onSelect={(c) => setSelectedClip(c)}
+                    onExportClip={(c) => setSelectedExportClip(c)}
                   />
                 ))}
               </div>
@@ -459,6 +463,13 @@ export function App() {
         onClose={() => setSelectedClip(null)}
         onUpdateClip={handleUpdateClip}
         onDeleteClip={handleDeleteClip}
+        onExportClip={(c) => setSelectedExportClip(c)}
+      />
+
+      <SocialExportModal
+        clip={selectedExportClip}
+        isOpen={!!selectedExportClip}
+        onClose={() => setSelectedExportClip(null)}
       />
 
       <AddClipModal

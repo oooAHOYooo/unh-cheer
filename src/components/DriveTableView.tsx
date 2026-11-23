@@ -6,23 +6,20 @@ import {
   Check, 
   Film, 
   Folder, 
-  HardDrive, 
-  Calendar,
-  ExternalLink,
-  CheckCircle2,
-  AlertTriangle,
-  RotateCcw
+  Share2
 } from 'lucide-react';
 import { Clip, ReviewStatus } from '../types/cheer';
 
 interface DriveTableViewProps {
   clips: Clip[];
   onSelectClip: (clip: Clip) => void;
+  onExportClip?: (clip: Clip) => void;
 }
 
 export const DriveTableView: React.FC<DriveTableViewProps> = ({
   clips,
   onSelectClip,
+  onExportClip,
 }) => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -33,7 +30,9 @@ export const DriveTableView: React.FC<DriveTableViewProps> = ({
   };
 
   const handleDownload = (clip: Clip) => {
-    if (clip.videoUrl) {
+    if (onExportClip) {
+      onExportClip(clip);
+    } else if (clip.videoUrl) {
       const a = document.createElement('a');
       a.href = clip.videoUrl;
       a.download = `${clip.title.replace(/[^a-zA-Z0-9_-]/g, '_')}.mp4`;
@@ -144,7 +143,7 @@ export const DriveTableView: React.FC<DriveTableViewProps> = ({
                   {getStatusBadge(clip.status)}
                 </td>
 
-                {/* Actions: View, Download, Copy Link */}
+                {/* Actions: View, Download, Canva/Social */}
                 <td className="py-3 px-4 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                   <div className="inline-flex items-center space-x-1.5">
                     <button
@@ -160,11 +159,22 @@ export const DriveTableView: React.FC<DriveTableViewProps> = ({
                         <button
                           onClick={() => handleDownload(clip)}
                           className="px-2.5 py-1 text-xs font-bold text-white bg-[#002D62] hover:bg-[#001f44] rounded-sm transition-colors flex items-center gap-1 shadow-xs"
-                          title="Download Full Master MP4"
+                          title="Download / Canva / Social Export"
                         >
                           <Download className="w-3 h-3" />
                           <span>Download</span>
                         </button>
+
+                        {onExportClip && (
+                          <button
+                            onClick={() => onExportClip(clip)}
+                            className="px-2 py-1 text-xs font-bold text-[#002D62] bg-[#FFC72C] hover:bg-yellow-400 rounded-sm transition-colors flex items-center gap-1 shadow-2xs"
+                            title="Open Canva & Instagram Tools"
+                          >
+                            <Share2 className="w-3 h-3" />
+                            <span className="hidden sm:inline">Social</span>
+                          </button>
+                        )}
 
                         <button
                           onClick={() => copyUrl(clip.videoUrl || '', clip.id)}

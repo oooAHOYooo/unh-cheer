@@ -4,6 +4,7 @@ import {
   MessageSquare, 
   User, 
   Download,
+  Share2,
   Film
 } from 'lucide-react';
 import { Clip } from '../types/cheer';
@@ -11,15 +12,19 @@ import { Clip } from '../types/cheer';
 interface ClipCardProps {
   clip: Clip;
   onSelect: (clip: Clip) => void;
+  onExportClip?: (clip: Clip) => void;
 }
 
 export const ClipCard: React.FC<ClipCardProps> = ({
   clip,
   onSelect,
+  onExportClip,
 }) => {
   const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (clip.videoUrl) {
+    if (onExportClip) {
+      onExportClip(clip);
+    } else if (clip.videoUrl) {
       const a = document.createElement('a');
       a.href = clip.videoUrl;
       a.download = `${clip.title.replace(/[^a-zA-Z0-9_-]/g, '_')}.mp4`;
@@ -28,8 +33,6 @@ export const ClipCard: React.FC<ClipCardProps> = ({
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-    } else {
-      alert('Video file is being prepared in the bucket.');
     }
   };
 
@@ -68,7 +71,7 @@ export const ClipCard: React.FC<ClipCardProps> = ({
           </div>
         </div>
 
-        {/* Top Type Badge - Just the type up top, no extra pills */}
+        {/* Top Type Badge */}
         <div className="absolute top-2 left-2">
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-sm bg-[#002D62] text-white uppercase tracking-wider shadow-sm">
             {clip.skillCategory}
@@ -114,7 +117,7 @@ export const ClipCard: React.FC<ClipCardProps> = ({
           )}
         </div>
 
-        {/* Bottom Actions: Recorded Date & View/Download Buttons */}
+        {/* Bottom Actions */}
         <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
           <span className="text-[11px] text-slate-400 font-mono">
             {clip.dateRecorded}
@@ -139,10 +142,25 @@ export const ClipCard: React.FC<ClipCardProps> = ({
                 type="button"
                 onClick={handleDownload}
                 className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-white bg-[#002D62] hover:bg-[#001f44] rounded-sm transition-colors shadow-xs"
-                title="Download MP4 to Computer"
+                title="Download / Canva / Instagram Export"
               >
                 <Download className="w-3 h-3" />
                 <span>Download</span>
+              </button>
+            )}
+
+            {onExportClip && clip.videoUrl && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onExportClip(clip);
+                }}
+                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-[#002D62] bg-[#FFC72C] hover:bg-yellow-400 rounded-sm transition-colors shadow-2xs"
+                title="Canva & Instagram Social Hub"
+              >
+                <Share2 className="w-3 h-3" />
+                <span className="hidden sm:inline">Social</span>
               </button>
             )}
           </div>

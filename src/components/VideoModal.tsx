@@ -12,7 +12,8 @@ import {
   MessageSquare,
   Database,
   ExternalLink,
-  Download
+  Download,
+  Share2
 } from 'lucide-react';
 import { Clip, ReviewStatus } from '../types/cheer';
 
@@ -21,6 +22,7 @@ interface VideoModalProps {
   onClose: () => void;
   onUpdateClip: (updated: Clip) => void;
   onDeleteClip: (id: string) => void;
+  onExportClip?: (clip: Clip) => void;
 }
 
 export const VideoModal: React.FC<VideoModalProps> = ({
@@ -28,6 +30,7 @@ export const VideoModal: React.FC<VideoModalProps> = ({
   onClose,
   onUpdateClip,
   onDeleteClip,
+  onExportClip,
 }) => {
   if (!clip) return null;
 
@@ -117,14 +120,27 @@ export const VideoModal: React.FC<VideoModalProps> = ({
           </div>
           <div className="flex items-center space-x-2 shrink-0">
             {videoUrlInput && (
-              <button
-                onClick={handleDownload}
-                className="px-2.5 py-1 text-xs font-bold bg-[#FFC72C] hover:bg-yellow-400 text-[#002D62] rounded-sm flex items-center gap-1 transition-colors shadow-xs"
-                title="Download MP4 to your computer"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Download MP4</span>
-              </button>
+              <>
+                <button
+                  onClick={handleDownload}
+                  className="px-2.5 py-1 text-xs font-bold bg-[#FFC72C] hover:bg-yellow-400 text-[#002D62] rounded-sm flex items-center gap-1 transition-colors shadow-xs"
+                  title="Download MP4 to your computer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download MP4</span>
+                </button>
+
+                {onExportClip && (
+                  <button
+                    onClick={() => onExportClip(clip)}
+                    className="px-2.5 py-1 text-xs font-bold bg-white text-[#002D62] hover:bg-blue-50 rounded-sm flex items-center gap-1 transition-colors shadow-xs border border-blue-200"
+                    title="Export for Canva & Instagram"
+                  >
+                    <Share2 className="w-3.5 h-3.5 text-[#002D62]" />
+                    <span>Canva & Social</span>
+                  </button>
+                )}
+              </>
             )}
             <button 
               onClick={onClose}
