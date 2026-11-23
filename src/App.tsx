@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { MetricsOverview } from './components/MetricsOverview';
 import { ClipCard } from './components/ClipCard';
+import { DriveTableView } from './components/DriveTableView';
 import { VideoModal } from './components/VideoModal';
 import { AddClipModal } from './components/AddClipModal';
 import { CoachReviewTab } from './components/CoachReviewTab';
@@ -10,9 +11,10 @@ import { TryoutCurriculum } from './components/TryoutCurriculum';
 import { BucketHelperModal } from './components/BucketHelperModal';
 import { INITIAL_CLIPS, INITIAL_EVENTS } from './data/initialData';
 import { Clip, CheerEvent, SkillCategory } from './types/cheer';
-import { Plus, Film } from 'lucide-react';
+import { Plus, Film, LayoutGrid, List, Folder, HardDrive, Download, Sparkles } from 'lucide-react';
 
 const CATEGORIES: SkillCategory[] = [
+  'Interviews',
   'Tumbling & Flips',
   'Stunts & Partner',
   'Pyramids',
@@ -21,11 +23,18 @@ const CATEGORIES: SkillCategory[] = [
 ];
 
 export function App() {
-  // Persistence state
+  // Persistence state with auto-merger for newly added interview master exports
   const [clips, setClips] = useState<Clip[]>(() => {
     try {
-      const saved = localStorage.getItem('unh_cheer_clips_v2');
+      const saved = localStorage.getItem('unh_cheer_clips_v3');
       if (saved) return JSON.parse(saved);
+      const prev = localStorage.getItem('unh_cheer_clips_v2');
+      if (prev) {
+        const parsed: Clip[] = JSON.parse(prev);
+        const existingIds = new Set(parsed.map(c => c.id));
+        const toAdd = INITIAL_CLIPS.filter(c => !existingIds.has(c.id));
+        return [...toAdd, ...parsed];
+      }
     } catch (e) {
       console.error('Error loading clips', e);
     }
@@ -48,6 +57,7 @@ export function App() {
 
   // UI state
   const [activeTab, setActiveTab] = useState<'library' | 'coach' | 'calendar' | 'tryouts'>('library');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -58,7 +68,7 @@ export function App() {
   // Sync to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('unh_cheer_clips_v2', JSON.stringify(clips));
+      localStorage.setItem('unh_cheer_clips_v3', JSON.stringify(clips));
     } catch (e) {
       console.error('Failed to save clips', e);
     }
@@ -175,6 +185,7 @@ export function App() {
   });
 
   const pendingReviewCount = clips.filter(c => c.status === 'needs_review').length;
+  const interviewCount = clips.filter(c => c.skillCategory === 'Interviews').length;
 
   return (
     <div className="min-h-screen bg-[#f0f4f9] text-slate-900 flex flex-col font-sans">
@@ -209,28 +220,63 @@ export function App() {
         {activeTab === 'library' && (
           <div className="space-y-4">
             
-            {/* Tryouts Callout Banner */}
-            <div className="bg-white border-l-4 border-[#FFC72C] p-3 rounded-md border border-slate-200/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-[#002D62] text-white rounded-sm">
-                  Tryout Prep
-                </span>
-                <span className="text-xs font-semibold text-slate-800">
-                  New to the team or trying out? Review the required tumbling, stunting, and jumps curriculum.
-                </span>
+            {/* Google Drive Style Library Overview Banner */}
+            <div className="bg-white border-l-4 border-[#002D62] p-4 rounded-md border border-slate-200/90 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 bg-[#002D62] text-white rounded-sm flex items-center gap-1">
+                    <Folder className="w-3 h-3 text-[#FFC72C]" />
+                    Media Library & Drive
+                  </span>
+                  <span className="text-xs font-bold text-slate-700">
+                    Full uncut interviews & practice footage
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Organized content vault with in-browser video playback and direct master MP4 download links for Coach Alexis Vano and the team.
+                </p>
               </div>
-              <button
-                onClick={() => setActiveTab('tryouts')}
-                className="text-xs font-bold text-[#002D62] hover:underline flex items-center gap-1 shrink-0"
-              >
-                View Tryout Curriculum →
-              </button>
+
+              {/* View Switcher & Quick Stats */}
+              <div className="flex items-center gap-3 shrink-0">
+                <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+                  {interviewCount} Full Interviews (404 MB)
+                </span>
+
+                <div className="flex items-center bg-slate-100 p-0.5 rounded-sm border border-slate-200 text-xs">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`px-2 py-1 font-semibold flex items-center gap-1 rounded-sm transition-colors ${
+                      viewMode === 'grid' 
+                        ? 'bg-[#002D62] text-white shadow-xs' 
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                    title="Grid Card View"
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>Grid</span>
+                  </button>
+
+                  <button
+                    onClick={() => setViewMode('table')}
+                    className={`px-2 py-1 font-semibold flex items-center gap-1 rounded-sm transition-colors ${
+                      viewMode === 'table' 
+                        ? 'bg-[#002D62] text-white shadow-xs' 
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                    title="Drive Table View (Name, Size, View, Download)"
+                  >
+                    <List className="w-3.5 h-3.5" />
+                    <span>Drive List</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Filter Bar - No Pills, Simple Clean Rectangles */}
+            {/* Filter Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-md border border-slate-200/90 shadow-sm">
               
-              {/* Category Filters */}
+              {/* Category / Folder Filters */}
               <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
                 <button
                   onClick={() => setSelectedCategory('all')}
@@ -245,16 +291,18 @@ export function App() {
 
                 {CATEGORIES.map(cat => {
                   const count = clips.filter(c => c.skillCategory === cat).length;
+                  const isInterview = cat === 'Interviews';
                   return (
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
-                      className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-sm transition-colors whitespace-nowrap ${
+                      className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-sm transition-colors whitespace-nowrap flex items-center gap-1 ${
                         selectedCategory === cat
-                          ? 'bg-[#002D62] text-white shadow-xs'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          ? isInterview ? 'bg-[#FFC72C] text-[#002D62] shadow-xs' : 'bg-[#002D62] text-white shadow-xs'
+                          : isInterview ? 'bg-amber-100/70 text-[#002D62] hover:bg-amber-100' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
+                      {isInterview && <Sparkles className="w-3 h-3 text-[#002D62]" />}
                       {cat} {count > 0 && `(${count})`}
                     </button>
                   );
@@ -279,7 +327,7 @@ export function App() {
 
             </div>
 
-            {/* Clips Grid */}
+            {/* Clips View: Either Drive Table or Grid */}
             {filteredClips.length === 0 ? (
               <div className="bg-white border border-slate-200 rounded-md p-10 text-center space-y-2.5 shadow-sm">
                 <Film className="w-10 h-10 text-slate-400 mx-auto" />
@@ -294,6 +342,11 @@ export function App() {
                   <Plus className="w-3.5 h-3.5" /> Add New Clip
                 </button>
               </div>
+            ) : viewMode === 'table' ? (
+              <DriveTableView
+                clips={filteredClips}
+                onSelectClip={(c) => setSelectedClip(c)}
+              />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredClips.map((clip) => (

@@ -3,10 +3,12 @@ import {
   Play, 
   MessageSquare, 
   User, 
-  Clock, 
+  Download,
   CheckCircle,
   AlertTriangle,
-  RotateCcw
+  RotateCcw,
+  Film,
+  HardDrive
 } from 'lucide-react';
 import { Clip, ReviewStatus } from '../types/cheer';
 
@@ -48,6 +50,22 @@ export const ClipCard: React.FC<ClipCardProps> = ({
     }
   };
 
+  const handleDownload = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (clip.videoUrl) {
+      const a = document.createElement('a');
+      a.href = clip.videoUrl;
+      a.download = `${clip.title.replace(/[^a-zA-Z0-9_-]/g, '_')}.mp4`;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      alert('Video file is being prepared in the bucket.');
+    }
+  };
+
   return (
     <div 
       onClick={() => onSelect(clip)}
@@ -69,16 +87,26 @@ export const ClipCard: React.FC<ClipCardProps> = ({
           </div>
         </div>
 
-        {/* Top Tag */}
-        <div className="absolute top-2 left-2">
+        {/* Top Badges */}
+        <div className="absolute top-2 left-2 flex items-center gap-1.5">
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-sm bg-[#002D62] text-white uppercase tracking-wider shadow-sm">
             {clip.skillCategory}
           </span>
+          {clip.skillCategory === 'Interviews' && (
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-sm bg-[#FFC72C] text-[#002D62] uppercase tracking-wider shadow-sm">
+              Color Graded
+            </span>
+          )}
         </div>
 
         {/* Bottom Tag */}
-        <div className="absolute bottom-2 right-2">
-          <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded-sm bg-black/70 text-white">
+        <div className="absolute bottom-2 right-2 flex items-center gap-1">
+          {clip.fileSize && (
+            <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded-sm bg-black/75 text-amber-300">
+              {clip.fileSize}
+            </span>
+          )}
+          <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded-sm bg-black/75 text-white">
             {clip.aspectRatio} {clip.duration && `• ${clip.duration}`}
           </span>
         </div>
@@ -93,7 +121,7 @@ export const ClipCard: React.FC<ClipCardProps> = ({
             </h3>
           </div>
 
-          {/* Athletes */}
+          {/* Athletes / Participants */}
           {clip.athletes && clip.athletes.length > 0 && (
             <div className="flex items-center gap-1.5 text-xs text-slate-600 mb-2">
               <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -112,14 +140,40 @@ export const ClipCard: React.FC<ClipCardProps> = ({
           )}
         </div>
 
-        {/* Footer */}
-        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+        {/* Bottom Actions: View & Download Buttons */}
+        <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
           <div>
             {getStatusBadge(clip.status)}
           </div>
-          <span className="text-[11px] text-slate-400 font-mono">
-            {clip.dateRecorded}
-          </span>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(clip);
+              }}
+              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-[#002D62] bg-blue-50 hover:bg-blue-100 rounded-sm transition-colors border border-blue-200"
+              title="View in Player"
+            >
+              <Play className="w-3 h-3 fill-[#002D62]" />
+              <span>View</span>
+            </button>
+
+            {clip.videoUrl ? (
+              <button
+                type="button"
+                onClick={handleDownload}
+                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-white bg-[#002D62] hover:bg-[#001f44] rounded-sm transition-colors shadow-xs"
+                title="Download MP4 to Computer"
+              >
+                <Download className="w-3 h-3" />
+                <span>Download</span>
+              </button>
+            ) : (
+              <span className="text-[10px] text-slate-400 font-mono">No MP4</span>
+            )}
+          </div>
         </div>
 
       </div>

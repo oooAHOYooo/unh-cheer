@@ -9,6 +9,7 @@ interface AddClipModalProps {
 }
 
 const CATEGORIES: SkillCategory[] = [
+  'Interviews',
   'Tumbling & Flips',
   'Stunts & Partner',
   'Pyramids',
